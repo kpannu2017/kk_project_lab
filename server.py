@@ -138,7 +138,8 @@ def substitute():
     context = f' in "{recipe_name}"' if recipe_name else ""
     prompt = (
         f'A cook doesn\'t have {ingredient}{context}. '
-        f"Suggest the best substitute and explain in 1–2 sentences why it works for this dish. Be specific and practical."
+        f"Suggest the best substitute and explain in 1–2 sentences why it works for this dish. "
+        f"Be specific and practical. Plain prose only — no markdown, no headers, no bullet points."
     )
 
     try:
