@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haute Food Fusion — The Midnight Kitchen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,600&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #060606;
+            --gold: #C4A35A;
+            --gold-dim: rgba(196,163,90,0.55);
+            --gold-glow: rgba(196,163,90,0.18);
+            --cream: #F0E8D8;
+            --cream-dim: rgba(240,232,216,0.55);
+            --muted: rgba(240,232,216,0.3);
+            --border-gold: rgba(196,163,90,0.2);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--black);
+            color: var(--cream);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            overflow-x: hidden;
+        }
+
+        /* Grain overlay using SVG noise */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.038;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 300px 300px;
+        }
+
+        /* Radial glow */
+        body::after {
+            content: '';
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(ellipse, rgba(196,163,90,0.04) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 3.5rem;
+            background: linear-gradient(to bottom, rgba(6,6,6,0.95) 0%, transparent 100%);
+        }
+        .nav-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .nav-right { display: flex; align-items: center; gap: 2.5rem; }
+        .nav-link {
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-link:hover { color: var(--gold); }
+        .nav-enter {
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid var(--border-gold);
+            padding: 0.55rem 1.4rem;
+            transition: all 0.3s;
+        }
+        .nav-enter:hover { background: var(--gold-glow); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-prelude {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--gold-dim);
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: riseIn 1.2s ease 0.3s forwards;
+        }
+        .hero-word {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(6rem, 14vw, 14rem);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            color: var(--cream);
+            margin-bottom: 0;
+            opacity: 0;
+            animation: riseIn 1.4s ease 0.5s forwards;
+            text-shadow: 0 0 80px rgba(196,163,90,0.12);
+        }
+        .hero-tagline {
+            display: block;
+            font-size: clamp(0.85rem, 2vw, 1.6rem);
+            font-weight: 300;
+            font-style: normal;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-top: 1.5rem;
+            text-shadow: 0 0 30px rgba(196,163,90,0.4);
+            font-family: 'Montserrat', sans-serif;
+            opacity: 0;
+            animation: riseIn 1.4s ease 0.8s forwards;
+        }
+        .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1rem, 1.8vw, 1.4rem);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--cream-dim);
+            max-width: 560px;
+            line-height: 1.7;
+            margin: 3.5rem auto;
+            opacity: 0;
+            animation: riseIn 1.4s ease 1.1s forwards;
+        }
+        .hero-cta {
+            opacity: 0;
+            animation: riseIn 1.4s ease 1.4s forwards;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .btn-illuminate {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 400;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--black);
+            background: var(--gold);
+            padding: 1rem 3rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.4s;
+            position: relative;
+        }
+        .btn-illuminate:hover { background: #D4B46A; }
+        .scroll-whisper {
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .gold-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+        }
+
+        .section { padding: 9rem 6rem; position: relative; z-index: 1; }
+        .section-center { text-align: center; }
+
+        .section-roman {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.8rem;
+            font-weight: 300;
+            letter-spacing: 0.35em;
+            color: var(--gold-dim);
+            display: block;
+            margin-bottom: 2rem;
+        }
+        .section-headline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        .gold-word { color: var(--gold); }
+        .section-body {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--cream-dim);
+            line-height: 1.85;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .steps-vertical {
+            display: flex;
+            flex-direction: column;
+            max-width: 720px;
+            margin: 5rem auto 0;
+        }
+        .step-row {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 2.5rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-gold);
+            align-items: start;
+        }
+        .step-row:last-child { border-bottom: 1px solid var(--border-gold); }
+        .step-n {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--gold);
+            line-height: 1;
+            opacity: 0.6;
+        }
+        .step-h {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+        .step-p {
+            font-size: 0.78rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            color: var(--muted);
+            line-height: 1.9;
+        }
+
+        /* Dish showcase */
+        .dish-section { padding: 7rem 6rem; position: relative; z-index: 1; }
+        .dish-intro { text-align: center; margin-bottom: 5rem; }
+        .dish-row { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+        .dish-item {
+            padding: 3.5rem 2.5rem;
+            border-left: 1px solid var(--border-gold);
+            position: relative;
+            transition: background 0.4s;
+        }
+        .dish-item:last-child { border-right: 1px solid var(--border-gold); }
+        .dish-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--gold-glow), transparent);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .dish-item:hover::before { opacity: 1; }
+        .dish-tag {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.55rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold-dim);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        .dish-name-lg {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-style: italic;
+            font-weight: 300;
+            color: var(--cream);
+            line-height: 1.25;
+            margin-bottom: 1rem;
+        }
+        .dish-blurb {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 300;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        /* Recipe spotlight */
+        .spotlight { padding: 8rem 6rem; position: relative; z-index: 1; background: linear-gradient(to bottom, transparent, rgba(196,163,90,0.03), transparent); }
+        .spotlight-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            border: 1px solid var(--border-gold);
+            padding: 4rem;
+            position: relative;
+        }
+        .spotlight-inner::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(135deg, rgba(196,163,90,0.08), transparent, rgba(196,163,90,0.05));
+            pointer-events: none;
+        }
+        .sp-eyebrow {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 2rem;
+        }
+        .sp-dish {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.6rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--cream);
+            margin-bottom: 0.5rem;
+            line-height: 1.15;
+        }
+        .sp-meta {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold-dim);
+            margin-bottom: 2.5rem;
+        }
+        .sp-bar { width: 48px; height: 1px; background: var(--gold); opacity: 0.4; margin-bottom: 2rem; }
+        .sp-step { display: flex; gap: 1.25rem; margin-bottom: 1.25rem; }
+        .sp-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: var(--gold);
+            opacity: 0.7;
+            padding-top: 2px;
+            min-width: 22px;
+        }
+        .sp-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+        .sp-plating { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-gold); }
+        .sp-plating-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.55rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+        .sp-plating-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem;
+            font-style: italic;
+            font-weight: 300;
+            color: rgba(240,232,216,0.7);
+            line-height: 1.75;
+        }
+
+        /* Pricing */
+        .pricing-section { padding: 9rem 6rem; position: relative; z-index: 1; text-align: center; }
+        .pricing-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 5rem auto 0;
+            text-align: left;
+        }
+        .price-card { border: 1px solid var(--border-gold); padding: 3rem; position: relative; }
+        .price-card.featured { border-color: rgba(196,163,90,0.6); }
+        .price-card.featured::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(196,163,90,0.06), transparent);
+            pointer-events: none;
+        }
+        .price-tier {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 2rem;
+        }
+        .price-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.5rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--cream);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+        .price-cadence { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; color: var(--muted); margin-bottom: 2.5rem; }
+        .price-features { list-style: none; margin-bottom: 3rem; }
+        .price-features li {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 300;
+            color: rgba(240,232,216,0.6);
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(196,163,90,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .pf-dot { color: var(--gold); font-size: 0.5rem; }
+        .btn-ghost-gold {
+            display: block;
+            width: 100%;
+            text-align: center;
+            border: 1px solid var(--border-gold);
+            background: transparent;
+            color: var(--cream-dim);
+            padding: 0.85rem 2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-ghost-gold:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-gold-solid {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: var(--gold);
+            color: var(--black);
+            padding: 0.85rem 2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        .btn-gold-solid:hover { background: #D4B46A; }
+
+        footer {
+            padding: 4rem 6rem;
+            border-top: 1px solid var(--border-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+        .footer-copy { font-family: 'Montserrat', sans-serif; font-size: 0.62rem; color: var(--muted); }
+
+        .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.9s cubic-bezier(.16,1,.3,1), transform 0.9s cubic-bezier(.16,1,.3,1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .d1 { transition-delay: 0.1s; }
+        .d2 { transition-delay: 0.25s; }
+        .d3 { transition-delay: 0.4s; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="nav-logo">Haute Food Fusion</a>
+        <div class="nav-right">
+            <a href="#process" class="nav-link">Process</a>
+            <a href="#creations" class="nav-link">Creations</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+            <a href="#" class="nav-enter">Enter the Kitchen</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <p class="hero-prelude">Powered by Claude AI &nbsp;&middot;&nbsp; Original Fusion Cuisine</p>
+        <h1 class="hero-word">Invent.</h1>
+        <span class="hero-tagline">Original Fusion Cuisine From Your Kitchen</span>
+        <p class="hero-subtitle">Two cuisines. Your ingredients. One dish that has never existed before — crafted by AI, plated like a Michelin star.</p>
+        <div class="hero-cta">
+            <a href="#" class="btn-illuminate">Begin Creating</a>
+            <span class="scroll-whisper">Scroll to explore &nbsp;&darr;</span>
+        </div>
+    </section>
+
+    <div class="gold-line"></div>
+
+    <section class="section section-center" id="process">
+        <span class="section-roman reveal">I. The Method</span>
+        <h2 class="section-headline reveal">Three choices.<br>One <span class="gold-word">original</span> creation.</h2>
+        <p class="section-body reveal">Tell the kitchen your cuisines, your ingredients, and your skill — and receive a dish invented for you alone. No database. No repetition. Pure invention.</p>
+        <div class="steps-vertical">
+            <div class="step-row reveal">
+                <div class="step-n">I</div>
+                <div>
+                    <h3 class="step-h">Choose Your Cuisines</h3>
+                    <p class="step-p">Select two or three world cuisines to fuse. Japanese and Peruvian. French and Korean. Ethiopian and Italian. The tension between traditions is where original flavor lives.</p>
+                </div>
+            </div>
+            <div class="step-row reveal">
+                <div class="step-n">II</div>
+                <div>
+                    <h3 class="step-h">Share Your Ingredients</h3>
+                    <p class="step-p">Tell us what's on your counter. The AI invents around what you already have — your pantry becomes the starting point, not a constraint.</p>
+                </div>
+            </div>
+            <div class="step-row reveal">
+                <div class="step-n">III</div>
+                <div>
+                    <h3 class="step-h">Declare Your Skill</h3>
+                    <p class="step-p">Home Cook, Confident Cook, or Chef-Level. Every recipe is calibrated precisely — technique, timing, vocabulary. Nothing wasted, nothing condescending.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="gold-line"></div>
+
+    <section class="dish-section" id="creations">
+        <div class="dish-intro">
+            <span class="section-roman reveal">II. Recent Inventions</span>
+            <h2 class="section-headline reveal">Dishes that <span class="gold-word">did not exist</span><br>until someone asked.</h2>
+        </div>
+        <div class="dish-row">
+            <div class="dish-item reveal d1">
+                <span class="dish-tag">French &times; Indian &times; Peruvian</span>
+                <h3 class="dish-name-lg">Ají Amarillo Agneau Confit</h3>
+                <p class="dish-blurb">Slow-braised lamb in an ají-coconut reduction, served in a fennel jus with herbes de Provence dust and crispy capers. Invented for a Confident Cook.</p>
+            </div>
+            <div class="dish-item reveal d2">
+                <span class="dish-tag">Korean &times; Italian</span>
+                <h3 class="dish-name-lg">Doenjang Brasato Pappardelle</h3>
+                <p class="dish-blurb">Doenjang-braised short rib ragù over hand-rolled gochugaru pasta, finished with truffle-kombu dashi and shaved pecorino. Chef-Level complexity.</p>
+            </div>
+            <div class="dish-item reveal d3">
+                <span class="dish-tag">Thai &times; Spanish</span>
+                <h3 class="dish-name-lg">Galangal Patatas Bravas</h3>
+                <p class="dish-blurb">Crispy potatoes in a lemongrass bravas sauce, topped with kaffir lime crema and charred scallion oil. Accessible for any Home Cook.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="gold-line"></div>
+
+    <section class="spotlight">
+        <div class="section-center" style="margin-bottom:4rem;">
+            <span class="section-roman reveal">III. A Recipe, Live</span>
+            <h2 class="section-headline reveal">What the AI <span class="gold-word">actually produces.</span></h2>
+        </div>
+        <div class="spotlight-inner reveal">
+            <p class="sp-eyebrow">AI-Generated Fusion Dish &nbsp;&middot;&nbsp; Miso &times; Mexican</p>
+            <h3 class="sp-dish">Miso-Lime Pollo Tostada</h3>
+            <p class="sp-meta">Japanese &times; Mexican &nbsp;&mdash;&nbsp; Home Cook &nbsp;&middot;&nbsp; 40 minutes</p>
+            <div class="sp-bar"></div>
+            <div class="sp-step">
+                <span class="sp-num">01.</span>
+                <span class="sp-text">Marinate chicken thighs in white miso, fresh lime juice, and a tablespoon of rice vinegar. Rest 30 minutes at room temperature.</span>
+            </div>
+            <div class="sp-step">
+                <span class="sp-num">02.</span>
+                <span class="sp-text">Heat a cast-iron pan until very hot. Sear chicken skin-side down until deeply caramelized — about 6 minutes. Flip and cook through. Rest, then slice thinly against the grain.</span>
+            </div>
+            <div class="sp-step">
+                <span class="sp-num">03.</span>
+                <span class="sp-text">Layer sliced chicken atop a crisped rice flour tostada. Crown with ripe avocado, brined jalapeño, and toasted sesame seeds.</span>
+            </div>
+            <div class="sp-plating">
+                <p class="sp-plating-label">Plating Suggestion</p>
+                <p class="sp-plating-text">"Fan the chicken slices in a tight arc across the tostada. Finish with drops of lime-infused oil and a single shiso leaf standing vertically at the centre for height."</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="gold-line"></div>
+
+    <section class="pricing-section" id="pricing">
+        <span class="section-roman reveal">IV. Access</span>
+        <h2 class="section-headline reveal">Begin for free.<br><span class="gold-word">Unlock</span> the full kitchen.</h2>
+        <div class="pricing-row">
+            <div class="price-card reveal d1">
+                <p class="price-tier">Free Access</p>
+                <p class="price-num">$0</p>
+                <p class="price-cadence">Forever free &nbsp;&middot;&nbsp; no card required</p>
+                <ul class="price-features">
+                    <li><span class="pf-dot">&#9670;</span> Unlimited recipe generation</li>
+                    <li><span class="pf-dot">&#9670;</span> Full recipe + plating guidance</li>
+                    <li><span class="pf-dot">&#9670;</span> Public recipe sharing</li>
+                    <li><span class="pf-dot">&#9670;</span> 50+ world cuisines</li>
+                </ul>
+                <a href="#" class="btn-ghost-gold">Enter Free</a>
+            </div>
+            <div class="price-card featured reveal d2">
+                <p class="price-tier">Haute Pro</p>
+                <p class="price-num">$9</p>
+                <p class="price-cadence">per month &nbsp;&middot;&nbsp; cancel anytime</p>
+                <ul class="price-features">
+                    <li><span class="pf-dot">&#9670;</span> Everything in Free</li>
+                    <li><span class="pf-dot">&#9670;</span> Save unlimited recipes</li>
+                    <li><span class="pf-dot">&#9670;</span> Ingredient substitutions</li>
+                    <li><span class="pf-dot">&#9670;</span> Export &amp; print as PDF</li>
+                </ul>
+                <a href="#" class="btn-gold-solid">Unlock Haute Pro</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="gold-line"></div>
+
+    <footer>
+        <span class="footer-brand">Haute Food Fusion</span>
+        <span class="footer-copy">&copy; 2026 &nbsp;&middot;&nbsp; AI-invented cuisine for every kitchen</span>
+    </footer>
+
+    <script>
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haute Food Fusion — Generate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #F5F0E8; --charcoal: #1A1512; --charcoal-mid: #2E2820;
+            --gold: #B8860B; --gold-light: #D4A843; --muted: #8A7F74;
+            --border: rgba(184,134,11,0.2); --border-light: rgba(184,134,11,0.12);
+            --pro-glow: rgba(184,134,11,0.07);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body { background: var(--cream); color: var(--charcoal); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow: hidden; }
+
+        /* NAV */
+        nav { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; border-bottom: 1px solid var(--border); background: var(--cream); position: fixed; top: 0; left: 0; right: 0; z-index: 200; }
+        .nav-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 500; color: var(--charcoal); text-decoration: none; letter-spacing: 0.04em; }
+        .nav-logo em { font-style: normal; color: var(--gold); }
+        .nav-back { font-size: 0.72rem; color: var(--muted); text-decoration: none; margin-right: 1rem; transition: color 0.2s; }
+        .nav-back:hover { color: var(--charcoal); }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .tier-badge { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.3rem 0.8rem; border: 1px solid var(--border); color: var(--muted); font-weight: 500; }
+        .tier-badge.pro { border-color: var(--gold); color: var(--gold); background: var(--pro-glow); }
+        .btn-upgrade { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; background: var(--charcoal); color: var(--cream); padding: 0.45rem 1.1rem; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+        .btn-upgrade:hover { background: var(--gold); }
+        .btn-upgrade.gone { display: none; }
+
+        /* LAYOUT */
+        .app-layout { display: grid; grid-template-columns: 400px 1fr; height: calc(100vh - 56px); margin-top: 56px; }
+
+        /* INPUT PANEL */
+        .input-panel { border-right: 1px solid var(--border); overflow-y: auto; padding: 2.5rem 2rem; display: flex; flex-direction: column; gap: 2rem; }
+        .input-panel::-webkit-scrollbar { width: 4px; }
+        .input-panel::-webkit-scrollbar-thumb { background: var(--border); }
+        .panel-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 400; line-height: 1.2; margin-bottom: 0.2rem; }
+        .panel-sub { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+        .input-group { display: flex; flex-direction: column; gap: 0.6rem; }
+        .input-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal); display: flex; justify-content: space-between; align-items: center; }
+        .input-hint { font-size: 0.62rem; color: var(--muted); letter-spacing: 0; text-transform: none; font-weight: 300; }
+
+        /* CUISINE */
+        .cuisine-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 24px; }
+        .chip { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--charcoal); color: var(--cream); padding: 0.3rem 0.7rem; font-size: 0.72rem; }
+        .chip-x { cursor: pointer; opacity: 0.6; line-height: 1; }
+        .chip-x:hover { opacity: 1; }
+        .cuisine-wrap { position: relative; }
+        .cuisine-input { width: 100%; border: 1px solid var(--border); background: white; padding: 0.65rem 0.85rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 300; color: var(--charcoal); outline: none; transition: border-color 0.2s; }
+        .cuisine-input:focus { border-color: var(--gold); }
+        .cuisine-input::placeholder { color: var(--muted); }
+        .cuisine-input:disabled { opacity: 0.4; cursor: not-allowed; }
+        .c-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border); border-top: none; max-height: 200px; overflow-y: auto; z-index: 50; display: none; }
+        .c-dropdown.open { display: block; }
+        .c-option { padding: 0.6rem 0.85rem; font-size: 0.82rem; cursor: pointer; transition: background 0.15s; }
+        .c-option:hover { background: var(--pro-glow); }
+
+        /* INGREDIENTS */
+        .ing-area { width: 100%; border: 1px solid var(--border); background: white; padding: 0.75rem 0.85rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 300; color: var(--charcoal); outline: none; resize: none; line-height: 1.65; transition: border-color 0.2s; }
+        .ing-area:focus { border-color: var(--gold); }
+        .ing-area::placeholder { color: var(--muted); }
+
+        /* SKILL CARDS */
+        .skill-cards { display: flex; flex-direction: column; gap: 0.5rem; }
+        .skill-card { border: 1px solid var(--border); padding: 0.85rem 1rem; cursor: pointer; transition: all 0.2s; background: white; }
+        .skill-card:hover { border-color: var(--gold-light); }
+        .skill-card.sel { border-color: var(--gold); background: var(--pro-glow); }
+        .skill-title { font-size: 0.82rem; font-weight: 500; }
+        .skill-card.sel .skill-title { color: var(--gold); }
+        .skill-desc { font-size: 0.73rem; color: var(--muted); line-height: 1.5; margin-top: 0.15rem; }
+
+        /* GENERATE */
+        .btn-gen { background: var(--charcoal); color: var(--cream); border: none; padding: 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; font-weight: 500; width: 100%; transition: background 0.25s; }
+        .btn-gen:hover:not(:disabled) { background: var(--gold); }
+        .btn-gen:disabled { opacity: 0.4; cursor: not-allowed; }
+        .err { font-size: 0.72rem; color: #c0392b; display: none; }
+        .err.show { display: block; }
+
+        /* RESULT */
+        .result-panel { overflow-y: auto; position: relative; }
+        .result-panel::-webkit-scrollbar { width: 4px; }
+        .result-panel::-webkit-scrollbar-thumb { background: var(--border); }
+
+        /* EMPTY */
+        .empty-st { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; text-align: center; }
+        .empty-orn { font-family: 'Playfair Display', serif; font-size: 8rem; font-weight: 700; color: rgba(184,134,11,0.07); line-height: 1; margin-bottom: 1.5rem; user-select: none; }
+        .empty-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 400; font-style: italic; margin-bottom: 0.75rem; }
+        .empty-body { font-size: 0.85rem; color: var(--muted); line-height: 1.7; max-width: 360px; }
+
+        /* LOADING */
+        .loading-st { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 3rem; text-align: center; }
+        .loading-st.on { display: flex; }
+        .dots { display: flex; gap: 6px; margin-bottom: 2.5rem; }
+        .dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: dp 1.4s ease-in-out infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dp { 0%,80%,100% { opacity:0.2;transform:scale(0.8); } 40% { opacity:1;transform:scale(1.2); } }
+        .load-msg { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: var(--charcoal); min-height: 1.6em; transition: opacity 0.35s; }
+        .load-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; }
+
+        /* RECIPE */
+        .recipe-out { display: none; padding: 3.5rem; }
+        .recipe-out.on { display: block; animation: fuUp 0.5s ease; }
+        @keyframes fuUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+        .r-header { margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+        .r-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+        .r-tag { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border); padding: 0.3rem 0.7rem; font-weight: 500; }
+        .r-tag.skill { color: var(--muted); border-color: var(--border-light); }
+        .r-name { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem,3.5vw,2.8rem); font-weight: 400; font-style: italic; line-height: 1.15; margin-bottom: 0.5rem; }
+        .r-tagline { font-size: 0.9rem; color: var(--muted); font-style: italic; line-height: 1.6; margin-bottom: 0.4rem; }
+        .r-meta { font-size: 0.75rem; color: var(--muted); }
+        .action-bar { display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .act-btn { display: flex; align-items: center; gap: 0.4rem; font-family: 'DM Sans', sans-serif; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.55rem 1rem; border: 1px solid var(--border); background: white; color: var(--charcoal); cursor: pointer; transition: all 0.2s; font-weight: 400; }
+        .act-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .act-btn.locked { color: var(--muted); }
+        .act-btn.prim { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+        .act-btn.prim:hover { background: var(--gold); border-color: var(--gold); }
+
+        /* INGREDIENTS / STEPS */
+        .r-section { margin-bottom: 2.5rem; }
+        .r-sec-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+        .r-sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .ing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 2rem; }
+        .ing-item { font-size: 0.85rem; padding: 0.3rem 0; border-bottom: 1px solid var(--border-light); display: flex; align-items: baseline; gap: 0.4rem; line-height: 1.5; }
+        .ing-dot { color: var(--gold); font-size: 0.5rem; flex-shrink: 0; }
+        .step-list { display: flex; flex-direction: column; gap: 1.25rem; }
+        .step-item { display: flex; gap: 1.25rem; }
+        .step-n { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: rgba(184,134,11,0.2); line-height: 1.2; min-width: 28px; }
+        .step-t { font-size: 0.9rem; line-height: 1.8; padding-top: 0.15rem; }
+
+        /* PLATING */
+        .plating-wrap { margin-bottom: 2.5rem; }
+        .plating-box { border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 1.5rem; background: white; }
+        .plating-text { font-family: 'Playfair Display', serif; font-size: 1rem; font-style: italic; line-height: 1.8; }
+        .plating-locked { position: relative; }
+        .plating-locked .plating-box { filter: blur(4px); user-select: none; pointer-events: none; }
+        .plating-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; cursor: pointer; }
+        .plating-badge { background: var(--charcoal); color: var(--cream); padding: 0.5rem 1.2rem; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; transition: background 0.2s; }
+        .plating-badge:hover { background: var(--gold); }
+        .plating-hint { font-size: 0.7rem; color: var(--muted); }
+
+        /* SUBSTITUTION */
+        .sub-panel { border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 2rem; background: white; display: none; }
+        .sub-panel.on { display: block; animation: fuUp 0.3s ease; }
+        .sub-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
+        .sub-row { display: flex; gap: 0.75rem; }
+        .sub-in { flex: 1; border: 1px solid var(--border); background: var(--cream); padding: 0.6rem 0.75rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; outline: none; color: var(--charcoal); }
+        .sub-in:focus { border-color: var(--gold); }
+        .sub-go { background: var(--charcoal); color: var(--cream); border: none; padding: 0.6rem 1.1rem; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+        .sub-go:hover { background: var(--gold); }
+        .sub-ans { font-size: 0.82rem; color: var(--charcoal); margin-top: 0.75rem; line-height: 1.6; display: none; }
+        .sub-ans.on { display: block; animation: fuUp 0.3s ease; }
+
+        .r-divider { height: 1px; background: var(--border); margin: 2rem 0; }
+        .regen { font-size: 0.72rem; color: var(--muted); text-align: center; padding: 1rem; border-top: 1px solid var(--border-light); cursor: pointer; transition: color 0.2s; }
+        .regen:hover { color: var(--gold); }
+
+        /* MODALS */
+        .modal-bg { position: fixed; inset: 0; background: rgba(26,21,18,0.75); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 2rem; opacity: 0; transition: opacity 0.25s; }
+        .modal-bg.vis { opacity: 1; }
+        .modal-bg.off { display: none; }
+        .modal-box { background: var(--cream); max-width: 440px; width: 100%; padding: 2.5rem; transform: translateY(20px); transition: transform 0.25s; position: relative; }
+        .modal-bg.vis .modal-box { transform: translateY(0); }
+        .modal-x { position: absolute; top: 1rem; right: 1rem; font-size: 1.2rem; cursor: pointer; color: var(--muted); background: none; border: none; line-height: 1; }
+        .modal-x:hover { color: var(--charcoal); }
+        .modal-tag { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; font-weight: 500; }
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 400; line-height: 1.2; margin-bottom: 0.75rem; }
+        .modal-body { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 1.75rem; }
+
+        /* AUTH */
+        .auth-opts { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+        .auth-btn { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border); background: white; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; cursor: pointer; color: var(--charcoal); text-align: left; display: flex; align-items: center; gap: 0.75rem; transition: border-color 0.2s; }
+        .auth-btn:hover { border-color: var(--gold); }
+        .auth-div { display: flex; align-items: center; gap: 0.75rem; margin: 1rem 0; font-size: 0.72rem; color: var(--muted); }
+        .auth-div::before, .auth-div::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .btn-guest { width: 100%; padding: 0.75rem; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
+        .btn-guest:hover { color: var(--charcoal); }
+
+        /* PAYWALL */
+        .pw-note { font-size: 0.72rem; color: var(--gold); background: var(--pro-glow); border: 1px solid var(--border); padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-style: italic; }
+        .pw-feats { list-style: none; margin-bottom: 2rem; }
+        .pw-feats li { font-size: 0.85rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 0.75rem; }
+        .pw-check { color: var(--gold); font-size: 0.7rem; }
+        .pw-price { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+        .pw-price span { font-size: 1rem; font-weight: 400; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+        .btn-pw { width: 100%; background: var(--gold); color: var(--charcoal); border: none; padding: 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; font-weight: 500; transition: background 0.2s; margin-bottom: 0.5rem; }
+        .btn-pw:hover { background: var(--gold-light); }
+        .btn-pw-skip { width: 100%; background: none; border: none; font-size: 0.75rem; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0.4rem; }
+
+        /* TOAST */
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--charcoal); color: var(--cream); padding: 0.75rem 1.5rem; font-size: 0.78rem; opacity: 0; transition: all 0.35s; z-index: 1000; pointer-events: none; white-space: nowrap; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authModal">
+    <div class="modal-box">
+        <p class="modal-tag">Welcome</p>
+        <h2 class="modal-title">Sign in to start creating</h2>
+        <p class="modal-body">Free accounts get unlimited recipe generation. Upgrade to Haute Pro to save recipes, unlock plating suggestions, substitutions, and PDF export.</p>
+        <div class="auth-opts">
+            <button class="auth-btn" id="authGoogle">&#9670; &nbsp;Continue with Google</button>
+            <button class="auth-btn" id="authApple">&#9670; &nbsp;Continue with Apple</button>
+        </div>
+        <div class="auth-div">or</div>
+        <button class="btn-guest" id="authGuest">Continue as guest (free, no save)</button>
+    </div>
+</div>
+
+<!-- PAYWALL MODAL -->
+<div class="modal-bg off" id="paywallModal">
+    <div class="modal-box">
+        <button class="modal-x" id="paywallClose">&times;</button>
+        <p class="modal-tag">Haute Pro</p>
+        <h2 class="modal-title">Unlock the full kitchen</h2>
+        <p class="pw-note" id="pwNote">Upgrade to access this feature</p>
+        <ul class="pw-feats">
+            <li><span class="pw-check">✦</span> Plating suggestions (Michelin-level)</li>
+            <li><span class="pw-check">✦</span> Save unlimited recipes</li>
+            <li><span class="pw-check">✦</span> Ingredient substitutions</li>
+            <li><span class="pw-check">✦</span> Export &amp; print as PDF</li>
+        </ul>
+        <p class="pw-price">$9 <span>/ month, cancel anytime</span></p>
+        <button class="btn-pw" id="pwUpgradeBtn">Upgrade to Haute Pro</button>
+        <button class="btn-pw-skip" id="pwDismiss">Not now</button>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <a href="landing_v1.html" class="nav-back">&#8592; Home</a>
+        <a href="landing_v1.html" class="nav-logo">Haute <em>Food</em> Fusion</a>
+    </div>
+    <div class="nav-right">
+        <span class="tier-badge" id="tierBadge">Free</span>
+        <span id="navUser" style="font-size:0.75rem;color:var(--muted);"></span>
+        <button class="btn-upgrade" id="upgradeBtn">Upgrade to Pro</button>
+    </div>
+</nav>
+
+<!-- APP -->
+<div class="app-layout">
+
+    <!-- INPUT PANEL -->
+    <aside class="input-panel">
+        <div>
+            <h1 class="panel-title">Invent a Fusion Dish</h1>
+            <p class="panel-sub">Three inputs. One dish that's never existed before.</p>
+        </div>
+
+        <div class="input-group">
+            <div class="input-label">
+                Cuisines
+                <span class="input-hint" id="cCount">0 / 3 selected</span>
+            </div>
+            <div class="cuisine-chips" id="chips"></div>
+            <div class="cuisine-wrap">
+                <input type="text" class="cuisine-input" id="cInput" placeholder="Search cuisines (e.g. Japanese)…" autocomplete="off">
+                <div class="c-dropdown" id="cDrop"></div>
+            </div>
+            <p class="err" id="cErr">Select at least 2 cuisines.</p>
+        </div>
+
+        <div class="input-group">
+            <div class="input-label">Your Ingredients</div>
+            <textarea class="ing-area" id="ingInput" rows="4" placeholder="e.g. chicken thighs, miso paste, avocado, lime, sesame oil, rice flour…"></textarea>
+            <p class="err" id="ingErr">List your ingredients to get started.</p>
+        </div>
+
+        <div class="input-group">
+            <div class="input-label">Skill Level</div>
+            <div class="skill-cards">
+                <div class="skill-card" data-skill="home">
+                    <div class="skill-title">Home Cook</div>
+                    <div class="skill-desc">Weeknight meals, basic techniques — sautéing, boiling, roasting</div>
+                </div>
+                <div class="skill-card" data-skill="confident">
+                    <div class="skill-title">Confident Cook</div>
+                    <div class="skill-desc">Comfortable with braising, deboning, sauces from scratch</div>
+                </div>
+                <div class="skill-card" data-skill="chef">
+                    <div class="skill-title">Chef-Level</div>
+                    <div class="skill-desc">Complex methods, multi-component dishes, specialty equipment</div>
+                </div>
+            </div>
+            <p class="err" id="skillErr">Select your skill level.</p>
+        </div>
+
+        <button class="btn-gen" id="genBtn">Generate My Dish</button>
+    </aside>
+
+    <!-- RESULT PANEL -->
+    <section class="result-panel">
+        <!-- Empty -->
+        <div class="empty-st" id="emptySt">
+            <div class="empty-orn">✦</div>
+            <h2 class="empty-title">Your dish will appear here.</h2>
+            <p class="empty-body">Select cuisines, share your ingredients, set your skill level, and click Generate. A dish invented just for you — in seconds.</p>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-st" id="loadSt">
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            <p class="load-msg" id="loadMsg">Inventing your fusion dish…</p>
+            <p class="load-sub">Claude is crafting something original</p>
+        </div>
+
+        <!-- Recipe -->
+        <div class="recipe-out" id="recipeOut">
+            <div class="r-header">
+                <div class="r-tags" id="rTags"></div>
+                <h2 class="r-name" id="rName"></h2>
+                <p class="r-tagline" id="rTagline"></p>
+                <p class="r-meta" id="rMeta"></p>
+                <div class="action-bar" id="actBar"></div>
+            </div>
+
+            <div class="r-section">
+                <div class="r-sec-label">Ingredients</div>
+                <div class="ing-grid" id="ingGrid"></div>
+            </div>
+
+            <div class="sub-panel" id="subPanel">
+                <p class="sub-label">Ingredient Substitution</p>
+                <div class="sub-row">
+                    <input type="text" class="sub-in" id="subIn" placeholder="I don't have ___">
+                    <button class="sub-go" id="subGo">Substitute</button>
+                </div>
+                <p class="sub-ans" id="subAns"></p>
+            </div>
+
+            <div class="r-section">
+                <div class="r-sec-label">Method</div>
+                <div class="step-list" id="stepList"></div>
+            </div>
+
+            <div class="r-divider"></div>
+
+            <div class="plating-wrap" id="platingWrap">
+                <div class="r-sec-label">Plating Suggestion</div>
+                <div id="platingInner"></div>
+            </div>
+
+            <p class="regen" id="regenBtn">↻ Generate another dish with these inputs</p>
+        </div>
+    </section>
+</div>
+
+<script>
+// ── HELPERS ───────────────────────────────────────────────
+// Safely create a text node — no HTML injection from user content
+const esc = s => document.createTextNode(String(s));
+
+function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ── STATE ─────────────────────────────────────────────────
+const S = { isPro: false, user: null, cuisines: [], skill: null, recipe: null };
+
+// ── CUISINE DATA ──────────────────────────────────────────
+const CUISINES = [
+    'Japanese','Chinese','Korean','Thai','Vietnamese','Indian','Lebanese',
+    'Turkish','Persian','Moroccan','Ethiopian','French','Italian','Spanish',
+    'Greek','Mexican','Peruvian','Brazilian','Argentine','Portuguese',
+    'German','Scandinavian','Indonesian','Malaysian','Filipino','Egyptian',
+    'Nigerian','Georgian','Jamaican','Sri Lankan'
+];
+
+// ── API ───────────────────────────────────────────────────
+// All recipe data comes from the server — no hardcoded recipes
+
+// ── AUTH ──────────────────────────────────────────────────
+function showAuth() {
+    const m = document.getElementById('authModal');
+    requestAnimationFrame(() => m.classList.add('vis'));
+}
+function closeAuth() {
+    const m = document.getElementById('authModal');
+    m.classList.remove('vis');
+}
+document.getElementById('authGoogle').addEventListener('click', () => {
+    S.user = 'Demo User';
+    document.getElementById('navUser').textContent = 'Demo User';
+    closeAuth();
+    showToast('Signed in with Google');
+});
+document.getElementById('authApple').addEventListener('click', () => {
+    S.user = 'Demo User';
+    document.getElementById('navUser').textContent = 'Demo User';
+    closeAuth();
+    showToast('Signed in with Apple');
+});
+document.getElementById('authGuest').addEventListener('click', () => { closeAuth(); });
+
+// ── PAYWALL ────────────────────────────────────────────────
+function openPaywall(note) {
+    document.getElementById('pwNote').textContent = note;
+    const m = document.getElementById('paywallModal');
+    m.classList.remove('off');
+    requestAnimationFrame(() => m.classList.add('vis'));
+}
+function closePaywall() {
+    const m = document.getElementById('paywallModal');
+    m.classList.remove('vis');
+    setTimeout(() => m.classList.add('off'), 250);
+}
+document.getElementById('paywallClose').addEventListener('click', closePaywall);
+document.getElementById('pwDismiss').addEventListener('click', closePaywall);
+document.getElementById('pwUpgradeBtn').addEventListener('click', () => {
+    S.isPro = true;
+    closePaywall();
+    document.getElementById('tierBadge').textContent = 'Pro';
+    document.getElementById('tierBadge').classList.add('pro');
+    document.getElementById('upgradeBtn').classList.add('gone');
+    showToast('Welcome to Haute Pro — all features unlocked!');
+    if (S.recipe) renderRecipe(S.recipe);
+});
+document.getElementById('upgradeBtn').addEventListener('click', () => openPaywall('Unlock Pro features for $9/month'));
+
+// ── CUISINE SELECTOR ──────────────────────────────────────
+const cInput = document.getElementById('cInput');
+const cDrop = document.getElementById('cDrop');
+
+function buildDropdown(list) {
+    cDrop.textContent = '';
+    if (!list.length) { cDrop.classList.remove('open'); return; }
+    list.slice(0, 12).forEach(name => {
+        const d = el('div', 'c-option', name);
+        d.addEventListener('mousedown', () => addCuisine(name));
+        cDrop.appendChild(d);
+    });
+    cDrop.classList.add('open');
+}
+
+cInput.addEventListener('input', () => {
+    const q = cInput.value.toLowerCase();
+    buildDropdown(CUISINES.filter(c => c.toLowerCase().includes(q) && !S.cuisines.includes(c)));
+});
+cInput.addEventListener('focus', () => {
+    const q = cInput.value.toLowerCase();
+    buildDropdown(q
+        ? CUISINES.filter(c => c.toLowerCase().includes(q) && !S.cuisines.includes(c))
+        : CUISINES.filter(c => !S.cuisines.includes(c)).slice(0, 10)
+    );
+});
+cInput.addEventListener('blur', () => setTimeout(() => cDrop.classList.remove('open'), 180));
+document.addEventListener('click', e => { if (!e.target.closest('.cuisine-wrap')) cDrop.classList.remove('open'); });
+
+function addCuisine(name) {
+    if (S.cuisines.length >= 3 || S.cuisines.includes(name)) return;
+    S.cuisines.push(name);
+    renderChips();
+    cInput.value = '';
+    cDrop.classList.remove('open');
+    if (S.cuisines.length >= 3) { cInput.disabled = true; cInput.placeholder = 'Maximum 3 cuisines selected'; }
+    document.getElementById('cCount').textContent = S.cuisines.length + ' / 3 selected';
+}
+
+function removeCuisine(name) {
+    S.cuisines = S.cuisines.filter(c => c !== name);
+    renderChips();
+    cInput.disabled = false;
+    cInput.placeholder = 'Search cuisines (e.g. Japanese)…';
+    document.getElementById('cCount').textContent = S.cuisines.length + ' / 3 selected';
+}
+
+function renderChips() {
+    const container = document.getElementById('chips');
+    container.textContent = '';
+    S.cuisines.forEach(name => {
+        const chip = el('div', 'chip');
+        chip.appendChild(document.createTextNode(name + ' '));
+        const x = el('span', 'chip-x', '×');
+        x.addEventListener('click', () => removeCuisine(name));
+        chip.appendChild(x);
+        container.appendChild(chip);
+    });
+}
+
+// ── SKILL ─────────────────────────────────────────────────
+document.querySelectorAll('.skill-card').forEach(card => {
+    card.addEventListener('click', () => {
+        S.skill = card.dataset.skill;
+        document.querySelectorAll('.skill-card').forEach(c => c.classList.toggle('sel', c === card));
+    });
+});
+
+// ── GENERATE ──────────────────────────────────────────────
+const LOAD_MSGS = ['Inventing your fusion dish…','Checking ingredient compatibility…','Calibrating to your skill level…','Crafting plating presentation…','Running quality review…'];
+
+document.getElementById('genBtn').addEventListener('click', generate);
+document.getElementById('regenBtn').addEventListener('click', generate);
+
+async function generate() {
+    let valid = true;
+    if (S.cuisines.length < 2) { document.getElementById('cErr').classList.add('show'); valid = false; } else { document.getElementById('cErr').classList.remove('show'); }
+    const ing = document.getElementById('ingInput').value.trim();
+    if (!ing) { document.getElementById('ingErr').classList.add('show'); valid = false; } else { document.getElementById('ingErr').classList.remove('show'); }
+    if (!S.skill) { document.getElementById('skillErr').classList.add('show'); valid = false; } else { document.getElementById('skillErr').classList.remove('show'); }
+    if (!valid) return;
+
+    document.getElementById('emptySt').style.display = 'none';
+    document.getElementById('recipeOut').classList.remove('on');
+    document.getElementById('loadSt').classList.add('on');
+    document.getElementById('genBtn').disabled = true;
+
+    let idx = 0;
+    const msgEl = document.getElementById('loadMsg');
+    msgEl.textContent = LOAD_MSGS[0];
+    const iv = setInterval(() => {
+        idx = (idx + 1) % LOAD_MSGS.length;
+        msgEl.style.opacity = '0';
+        setTimeout(() => { msgEl.textContent = LOAD_MSGS[idx]; msgEl.style.opacity = '1'; }, 300);
+    }, 1400);
+
+    try {
+        const resp = await fetch('/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cuisines: S.cuisines, ingredients: ing, skill: S.skill }),
+        });
+        const data = await resp.json();
+        if (!data.success) throw new Error(data.error || 'Generation failed');
+        S.recipe = { ...data.recipe, _cuisines: S.cuisines, _skill: S.skill };
+        clearInterval(iv);
+        document.getElementById('loadSt').classList.remove('on');
+        renderRecipe(S.recipe);
+    } catch (err) {
+        clearInterval(iv);
+        document.getElementById('loadSt').classList.remove('on');
+        document.getElementById('emptySt').style.display = '';
+        showToast('Error: ' + (err.message || 'Is the server running?'));
+    } finally {
+        document.getElementById('genBtn').disabled = false;
+    }
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderRecipe(r) {
+    // Tags — cuisine names come from predefined list, safe
+    const tagsEl = document.getElementById('rTags');
+    tagsEl.textContent = '';
+    (r._cuisines || S.cuisines).forEach(c => tagsEl.appendChild(el('span', 'r-tag', c)));
+    tagsEl.appendChild(el('span', 'r-tag skill', r.skill || r._skill));
+
+    document.getElementById('rName').textContent = r.name;
+    document.getElementById('rTagline').textContent = r.tagline || '';
+    document.getElementById('rMeta').textContent = '⏱ ' + r.time;
+
+    // Action bar
+    renderActions(r);
+
+    // Ingredients
+    const grid = document.getElementById('ingGrid');
+    grid.textContent = '';
+    r.ingredients.forEach(i => {
+        const item = el('div', 'ing-item');
+        item.appendChild(el('span', 'ing-dot', '◆'));
+        item.appendChild(document.createTextNode(i));
+        grid.appendChild(item);
+    });
+
+    // Steps
+    const steps = document.getElementById('stepList');
+    steps.textContent = '';
+    r.steps.forEach((s, i) => {
+        const row = el('div', 'step-item');
+        row.appendChild(el('div', 'step-n', String(i+1).padStart(2,'0')));
+        row.appendChild(el('p', 'step-t', s));
+        steps.appendChild(row);
+    });
+
+    // Plating (gated)
+    renderPlating(r.plating);
+
+    // Sub panel
+    document.getElementById('subPanel').classList.toggle('on', S.isPro);
+
+    document.getElementById('recipeOut').classList.add('on');
+}
+
+function renderActions(r) {
+    const bar = document.getElementById('actBar');
+    bar.textContent = '';
+    const actions = [
+        { label: 'Share', onClick: share },
+        { label: S.isPro ? 'Save Recipe' : '🔒 Save Recipe', onClick: S.isPro ? saveRecipe : () => openPaywall('Save recipes with Haute Pro') },
+        { label: S.isPro ? 'Substitute' : '🔒 Substitute', onClick: S.isPro ? toggleSub : () => openPaywall('Ingredient substitutions are a Pro feature') },
+        { label: S.isPro ? 'Export PDF' : '🔒 Export PDF', onClick: S.isPro ? exportPDF : () => openPaywall('Export recipes as PDF with Haute Pro') },
+    ];
+    actions.forEach((a, i) => {
+        const btn = el('button', 'act-btn' + (i === 1 && S.isPro ? ' prim' : ''), a.label);
+        btn.addEventListener('click', a.onClick);
+        bar.appendChild(btn);
+    });
+}
+
+function renderPlating(platingText) {
+    const inner = document.getElementById('platingInner');
+    inner.textContent = '';
+    if (S.isPro) {
+        const box = el('div', 'plating-box');
+        box.appendChild(el('p', 'plating-text', '“' + platingText + '”'));
+        inner.appendChild(box);
+    } else {
+        const wrap = el('div', 'plating-locked');
+        const box = el('div', 'plating-box');
+        box.appendChild(el('p', 'plating-text', '“' + platingText + '”'));
+        wrap.appendChild(box);
+        const overlay = el('div', 'plating-overlay');
+        const badge = el('div', 'plating-badge', '🔒 Unlock Plating Suggestions');
+        badge.addEventListener('click', () => openPaywall('Plating suggestions are a Haute Pro feature'));
+        overlay.appendChild(badge);
+        overlay.appendChild(el('span', 'plating-hint', 'Available with Haute Pro · $9/mo'));
+        overlay.addEventListener('click', () => openPaywall('Plating suggestions are a Haute Pro feature'));
+        wrap.appendChild(overlay);
+        inner.appendChild(wrap);
+    }
+}
+
+// ── ACTIONS ────────────────────────────────────────────────
+function share() {
+    const id = Math.random().toString(36).substr(2,8).toUpperCase();
+    const url = 'hautefoodfusion.com/r/' + id;
+    navigator.clipboard.writeText(url).catch(() => {});
+    showToast('Link copied: ' + url);
+}
+function saveRecipe() { showToast('“' + S.recipe.name + '” saved to your library'); }
+function toggleSub() { document.getElementById('subPanel').classList.toggle('on'); if (document.getElementById('subPanel').classList.contains('on')) document.getElementById('subIn').focus(); }
+function exportPDF() { showToast('PDF export would download here in the full product'); }
+
+// ── SUBSTITUTIONS ─────────────────────────────────────────
+document.getElementById('subGo').addEventListener('click', async () => {
+    const q = document.getElementById('subIn').value.trim();
+    if (!q) return;
+    const btn = document.getElementById('subGo');
+    btn.textContent = '…';
+    btn.disabled = true;
+    try {
+        const resp = await fetch('/substitute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ingredient: q, recipe_name: S.recipe ? S.recipe.name : '' }),
+        });
+        const data = await resp.json();
+        const ans = document.getElementById('subAns');
+        ans.textContent = data.success ? data.suggestion : 'Could not get a suggestion right now.';
+        ans.classList.add('on');
+    } catch (e) {
+        const ans = document.getElementById('subAns');
+        ans.textContent = 'Could not reach the server — is it still running?';
+        ans.classList.add('on');
+    } finally {
+        btn.textContent = 'Substitute';
+        btn.disabled = false;
+    }
+});
+
+// ── INIT ──────────────────────────────────────────────────
+document.getElementById('loadMsg').style.transition = 'opacity 0.3s ease';
+showAuth();
+</script>
+</body>
+</html>

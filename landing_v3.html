@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haute Food Fusion — The Atelier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@300;400;600;700;900&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0C1426;
+            --navy-light: #111B30;
+            --copper: #C17F3A;
+            --copper-dim: rgba(193,127,58,0.5);
+            --copper-ghost: rgba(193,127,58,0.08);
+            --copper-border: rgba(193,127,58,0.22);
+            --off-white: #EDE8DF;
+            --off-white-dim: rgba(237,232,223,0.55);
+            --off-white-muted: rgba(237,232,223,0.32);
+            --off-white-ghost: rgba(237,232,223,0.06);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--navy);
+            color: var(--off-white);
+            font-family: 'Spectral', serif;
+            font-weight: 300;
+            overflow-x: hidden;
+        }
+
+        /* Grid overlay background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--copper-ghost) 1px, transparent 1px),
+                linear-gradient(90deg, var(--copper-ghost) 1px, transparent 1px);
+            background-size: 80px 80px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 0 3rem;
+            height: 64px;
+            background: rgba(12,20,38,0.96);
+            border-bottom: 1px solid var(--copper-border);
+            backdrop-filter: blur(8px);
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .nav-tag {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--copper);
+        }
+        .nav-divider { width: 1px; height: 20px; background: var(--copper-border); }
+        .nav-link {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 400;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--off-white-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--copper); }
+        .nav-logo {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--off-white);
+            text-decoration: none;
+            text-align: center;
+        }
+        .nav-logo span { color: var(--copper); }
+        .nav-right { display: flex; justify-content: flex-end; }
+        .nav-cta {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--navy);
+            background: var(--copper);
+            padding: 0.5rem 1.5rem;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .nav-cta:hover { background: #D4934A; }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 92vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 2px solid var(--copper-border);
+            overflow: hidden;
+        }
+
+        /* Ghost number behind hero */
+        .hero-ghost-num {
+            position: absolute;
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 38vw;
+            font-weight: 900;
+            color: rgba(193,127,58,0.04);
+            bottom: -8vw;
+            right: -4vw;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Diagonal accent line */
+        .hero-diagonal {
+            position: absolute;
+            top: 0;
+            right: 49%;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--copper-border), transparent);
+            transform: skewX(-4deg);
+            pointer-events: none;
+        }
+
+        .hero-left {
+            padding: 5rem 4rem 5rem 3.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--copper-border);
+            position: relative;
+        }
+        .hero-number {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--copper);
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .hero-number::after {
+            content: '';
+            display: block;
+            flex: 1;
+            max-width: 48px;
+            height: 1px;
+            background: var(--copper);
+        }
+        .hero-heading {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(3.5rem, 6.5vw, 7rem);
+            font-weight: 900;
+            line-height: 0.92;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            color: var(--off-white);
+            margin-bottom: 0;
+        }
+        .hero-heading .accent-line {
+            color: var(--copper);
+            font-weight: 300;
+            font-style: italic;
+            font-family: 'Spectral', serif;
+            font-size: 0.68em;
+            letter-spacing: 0.02em;
+            text-transform: none;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .hero-right {
+            padding: 5rem 3.5rem 5rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .hero-label {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--off-white-muted);
+            margin-bottom: 2rem;
+        }
+        .hero-body {
+            font-family: 'Spectral', serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.85;
+            color: var(--off-white-dim);
+            margin-bottom: 3.5rem;
+        }
+        .hero-actions { display: flex; gap: 1rem; align-items: center; margin-bottom: 4rem; }
+        .btn-copper {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--navy);
+            background: var(--copper);
+            padding: 0.9rem 2rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .btn-copper:hover { background: #D4934A; }
+        .btn-line {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 400;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--off-white-muted);
+            text-decoration: none;
+            border-bottom: 1px solid var(--copper-border);
+            padding-bottom: 2px;
+            transition: color 0.2s;
+        }
+        .btn-line:hover { color: var(--copper); }
+
+        /* Stat row */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid var(--copper-border);
+            padding-top: 2rem;
+            gap: 1rem;
+        }
+        .stat-item { }
+        .stat-num {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--copper);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+        .stat-label {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.58rem;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--off-white-muted);
+        }
+
+        /* ── SECTION STRUCTURE ── */
+        .atelier-section {
+            position: relative;
+            z-index: 1;
+            border-bottom: 1px solid var(--copper-border);
+        }
+        .section-header {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            border-bottom: 1px solid var(--copper-border);
+        }
+        .section-index {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--copper);
+            padding: 1.5rem;
+            border-right: 1px solid var(--copper-border);
+            display: flex;
+            align-items: center;
+        }
+        .section-label {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 400;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--off-white-muted);
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+        }
+        .section-body-wrap { padding: 5rem 3.5rem; }
+
+        /* ── HOW IT WORKS ── */
+        .process-heading {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            line-height: 0.95;
+            color: var(--off-white);
+            margin-bottom: 4rem;
+        }
+        .process-heading em {
+            font-family: 'Spectral', serif;
+            font-style: italic;
+            font-weight: 300;
+            color: var(--copper);
+            font-size: 0.7em;
+            text-transform: none;
+            letter-spacing: 0.04em;
+        }
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border: 1px solid var(--copper-border);
+        }
+        .process-step {
+            padding: 2.5rem;
+            border-right: 1px solid var(--copper-border);
+            position: relative;
+        }
+        .process-step:last-child { border-right: none; }
+        .process-step::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--copper);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .process-step:hover::before { opacity: 1; }
+        .ps-num {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--off-white-ghost);
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+        .ps-heading {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--off-white);
+            margin-bottom: 1rem;
+        }
+        .ps-body {
+            font-family: 'Spectral', serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--off-white-dim);
+        }
+
+        /* ── CREATIONS ── */
+        .creations-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 0; }
+        .creations-intro { padding: 3rem 2.5rem; border-right: 1px solid var(--copper-border); }
+        .creations-heading {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            line-height: 0.95;
+            color: var(--off-white);
+            margin-bottom: 1.5rem;
+        }
+        .creations-subtext {
+            font-family: 'Spectral', serif;
+            font-size: 0.9rem;
+            font-style: italic;
+            color: var(--off-white-muted);
+            line-height: 1.75;
+        }
+        .dish-list { display: flex; flex-direction: column; }
+        .dish-entry {
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            align-items: start;
+            gap: 2rem;
+            padding: 2.5rem 2.5rem;
+            border-bottom: 1px solid var(--copper-border);
+            transition: background 0.3s;
+        }
+        .dish-entry:last-child { border-bottom: none; }
+        .dish-entry:hover { background: var(--off-white-ghost); }
+        .dish-cuisine-tag {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--copper);
+            padding-top: 0.4rem;
+        }
+        .dish-entry-name {
+            font-family: 'Spectral', serif;
+            font-size: 1.25rem;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--off-white);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .dish-entry-desc {
+            font-family: 'Spectral', serif;
+            font-size: 0.82rem;
+            font-weight: 300;
+            color: var(--off-white-dim);
+            line-height: 1.7;
+        }
+        .dish-level {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.58rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--off-white-muted);
+            border: 1px solid var(--copper-border);
+            padding: 0.35rem 0.75rem;
+            white-space: nowrap;
+            margin-top: 0.3rem;
+        }
+
+        /* ── SAMPLE RECIPE ── */
+        .recipe-wrap { padding: 5rem 3.5rem; }
+        .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .recipe-meta { }
+        .recipe-label {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--copper);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .recipe-label::after { content: ''; flex: 1; max-width: 32px; height: 1px; background: var(--copper); opacity: 0.5; }
+        .recipe-dish-name {
+            font-family: 'Spectral', serif;
+            font-size: 2.2rem;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--off-white);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .recipe-fusion-info {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--copper-dim);
+            margin-bottom: 3rem;
+        }
+        .recipe-steps { }
+        .recipe-step-item {
+            display: grid;
+            grid-template-columns: 36px 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--copper-border);
+        }
+        .recipe-step-item:last-child { border-bottom: none; }
+        .rs-num {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--copper);
+            line-height: 1.4;
+        }
+        .rs-text {
+            font-family: 'Spectral', serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--off-white-dim);
+            line-height: 1.8;
+        }
+        .recipe-plating {
+            border: 1px solid var(--copper-border);
+            padding: 2rem;
+            background: var(--copper-ghost);
+        }
+        .rp-label {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.58rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--copper);
+            margin-bottom: 1rem;
+        }
+        .rp-text {
+            font-family: 'Spectral', serif;
+            font-size: 1rem;
+            font-style: italic;
+            font-weight: 300;
+            color: var(--off-white-dim);
+            line-height: 1.75;
+        }
+
+        /* ── PRICING ── */
+        .pricing-wrap { padding: 5rem 3.5rem; }
+        .pricing-intro { margin-bottom: 3.5rem; }
+        .pricing-big-heading {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            line-height: 0.95;
+            color: var(--off-white);
+            margin-bottom: 1rem;
+        }
+        .pricing-big-heading em {
+            font-family: 'Spectral', serif;
+            font-style: italic;
+            font-weight: 300;
+            color: var(--copper);
+            text-transform: none;
+            font-size: 0.75em;
+        }
+        .pricing-cards-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border: 1px solid var(--copper-border);
+        }
+        .pc {
+            padding: 3rem;
+            border-right: 1px solid var(--copper-border);
+            position: relative;
+        }
+        .pc:last-child { border-right: none; }
+        .pc.featured { background: var(--copper-ghost); }
+        .pc-tier {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--copper);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .pc-tier::before { content: ''; display: block; width: 12px; height: 1px; background: var(--copper); }
+        .pc-price {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--off-white);
+            margin-bottom: 0.25rem;
+        }
+        .pc.featured .pc-price { color: var(--copper); }
+        .pc-cadence {
+            font-family: 'Spectral', serif;
+            font-size: 0.8rem;
+            font-style: italic;
+            color: var(--off-white-muted);
+            margin-bottom: 2.5rem;
+        }
+        .pc-features { list-style: none; margin-bottom: 2.5rem; }
+        .pc-features li {
+            font-family: 'Spectral', serif;
+            font-size: 0.88rem;
+            font-weight: 300;
+            color: var(--off-white-dim);
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--copper-border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .pf-mark {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 900;
+            color: var(--copper);
+        }
+        .btn-free {
+            display: block;
+            width: 100%;
+            text-align: center;
+            border: 1px solid var(--copper-border);
+            background: transparent;
+            color: var(--off-white-muted);
+            padding: 0.85rem;
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-free:hover { border-color: var(--copper); color: var(--copper); }
+        .btn-copper-block {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: var(--copper);
+            color: var(--navy);
+            padding: 0.85rem;
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .btn-copper-block:hover { background: #D4934A; }
+
+        /* ── FOOTER ── */
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 2px solid var(--copper-border);
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            align-items: center;
+            gap: 0;
+        }
+        .footer-index {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--copper);
+            padding: 2rem 1.5rem;
+            border-right: 1px solid var(--copper-border);
+        }
+        .footer-logo {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--off-white);
+            padding: 2rem;
+            text-decoration: none;
+        }
+        .footer-logo span { color: var(--copper); }
+        .footer-copy {
+            font-family: 'Big Shoulders Display', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            color: var(--off-white-muted);
+            padding: 2rem;
+        }
+
+        /* ── SCROLL REVEAL ── */
+        .appear { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .appear.in { opacity: 1; transform: translateY(0); }
+        .d1 { transition-delay: 0.08s; }
+        .d2 { transition-delay: 0.18s; }
+        .d3 { transition-delay: 0.28s; }
+
+        /* Hero entrance */
+        .hero-left, .hero-right { opacity: 0; animation: heroEnter 0.9s ease 0.2s forwards; }
+        .hero-right { animation-delay: 0.45s; }
+        @keyframes heroEnter {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav>
+        <div class="nav-left">
+            <span class="nav-tag">Atelier</span>
+            <div class="nav-divider"></div>
+            <a href="#process" class="nav-link">Process</a>
+            <a href="#creations" class="nav-link">Creations</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+        </div>
+        <a href="#" class="nav-logo">Haute <span>Food</span> Fusion</a>
+        <div class="nav-right">
+            <a href="#" class="nav-cta">Start Creating</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-ghost-num">H</div>
+
+        <div class="hero-left">
+            <div class="hero-number">01 &nbsp; Invention</div>
+            <h1 class="hero-heading">
+                Invent<br>
+                Fusion<br>
+                <em class="accent-line">dishes that don't exist yet</em>
+            </h1>
+        </div>
+
+        <div class="hero-right">
+            <p class="hero-label">Powered by Claude AI &nbsp;/&nbsp; Original Fusion Cuisine</p>
+            <p class="hero-body">
+                Two or three world cuisines. The ingredients in your kitchen. Your skill level. In seconds, AI invents an original dish — name, recipe, and high-end plating guidance — that has never existed before.
+            </p>
+            <div class="hero-actions">
+                <a href="#" class="btn-copper">Generate Your First Dish</a>
+                <a href="#creations" class="btn-line">See creations</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-num">50+</div>
+                    <div class="stat-label">World Cuisines</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">3</div>
+                    <div class="stat-label">Skill Levels</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">&infin;</div>
+                    <div class="stat-label">Original Dishes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="atelier-section" id="process">
+        <div class="section-header">
+            <div class="section-index">02</div>
+            <div class="section-label">The Process &nbsp;/&nbsp; How It Works</div>
+        </div>
+        <div class="section-body-wrap">
+            <h2 class="process-heading appear">
+                Three inputs.<br>
+                <em>One original dish.</em>
+            </h2>
+            <div class="process-grid">
+                <div class="process-step appear d1">
+                    <div class="ps-num">01</div>
+                    <h3 class="ps-heading">Cuisines</h3>
+                    <p class="ps-body">Select 2–3 world cuisines to fuse from a library of 50+, or enter your own. Japanese and Peruvian. French and Korean. Ethiopian and Italian. Unexpected tension creates original flavor.</p>
+                </div>
+                <div class="process-step appear d2">
+                    <div class="ps-num">02</div>
+                    <h3 class="ps-heading">Ingredients</h3>
+                    <p class="ps-body">List what's in your kitchen. The AI invents a dish around your pantry — no special shopping required. What you have becomes the creative constraint.</p>
+                </div>
+                <div class="process-step appear d3">
+                    <div class="ps-num">03</div>
+                    <h3 class="ps-heading">Skill Level</h3>
+                    <p class="ps-body">Choose Home Cook, Confident Cook, or Chef-Level. Every element of the output — technique, timing, terminology — is calibrated precisely to your ability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Creations -->
+    <section class="atelier-section" id="creations">
+        <div class="section-header">
+            <div class="section-index">03</div>
+            <div class="section-label">Inventions &nbsp;/&nbsp; Sample Dishes</div>
+        </div>
+        <div class="creations-layout">
+            <div class="creations-intro appear">
+                <h2 class="creations-heading">Dishes the world has never seen.</h2>
+                <p class="creations-subtext">Each dish is invented from scratch. Not retrieved. Not remixed from a database. Original — every time.</p>
+            </div>
+            <div class="dish-list">
+                <div class="dish-entry appear">
+                    <div class="dish-cuisine-tag">French &times; Indian &times; Peruvian</div>
+                    <div>
+                        <h3 class="dish-entry-name">Ají Amarillo Agneau Confit</h3>
+                        <p class="dish-entry-desc">Slow-braised lamb confit in an ají-coconut reduction, served in a fennel jus with herbes de Provence dust and crispy capers.</p>
+                    </div>
+                    <div class="dish-level">Confident Cook</div>
+                </div>
+                <div class="dish-entry appear">
+                    <div class="dish-cuisine-tag">Korean &times; Italian</div>
+                    <div>
+                        <h3 class="dish-entry-name">Doenjang Brasato Pappardelle</h3>
+                        <p class="dish-entry-desc">Doenjang-braised short rib ragù over hand-rolled gochugaru pasta, finished with truffle-kombu dashi and shaved pecorino.</p>
+                    </div>
+                    <div class="dish-level">Chef-Level</div>
+                </div>
+                <div class="dish-entry appear">
+                    <div class="dish-cuisine-tag">Thai &times; Spanish</div>
+                    <div>
+                        <h3 class="dish-entry-name">Galangal Patatas Bravas</h3>
+                        <p class="dish-entry-desc">Crispy potatoes in a lemongrass bravas sauce, topped with kaffir lime crema, smoked paprika oil, and charred scallion.</p>
+                    </div>
+                    <div class="dish-level">Home Cook</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sample Recipe -->
+    <section class="atelier-section">
+        <div class="section-header">
+            <div class="section-index">04</div>
+            <div class="section-label">Output &nbsp;/&nbsp; A Recipe in Full</div>
+        </div>
+        <div class="recipe-wrap">
+            <div class="recipe-grid appear">
+                <div class="recipe-meta">
+                    <p class="recipe-label">AI-Generated</p>
+                    <h3 class="recipe-dish-name">Miso-Lime Pollo Tostada</h3>
+                    <p class="recipe-fusion-info">Japanese &times; Mexican &nbsp;&mdash;&nbsp; Home Cook &nbsp;&middot;&nbsp; 40 min</p>
+                    <div class="recipe-plating">
+                        <p class="rp-label">Plating Suggestion</p>
+                        <p class="rp-text">"Fan the chicken slices in a tight arc across the tostada. Finish with drops of lime-infused oil and a single shiso leaf standing vertically at the centre for height and elegance."</p>
+                    </div>
+                </div>
+                <div class="recipe-steps">
+                    <div class="recipe-step-item">
+                        <div class="rs-num">01</div>
+                        <p class="rs-text">Marinate chicken thighs in white miso, fresh lime juice, and a tablespoon of rice vinegar. Rest for 30 minutes at room temperature to allow the flavors to penetrate.</p>
+                    </div>
+                    <div class="recipe-step-item">
+                        <div class="rs-num">02</div>
+                        <p class="rs-text">Heat a cast-iron pan over high heat until smoking. Sear chicken skin-side down until deeply caramelized — approximately 6 minutes. Flip and cook through. Rest 5 minutes, then slice thinly against the grain.</p>
+                    </div>
+                    <div class="recipe-step-item">
+                        <div class="rs-num">03</div>
+                        <p class="rs-text">Layer sliced chicken atop a crisped rice flour tostada. Crown with ripe avocado, brined jalapeño, a scatter of toasted sesame seeds, and a squeeze of fresh lime to finish.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="atelier-section" id="pricing">
+        <div class="section-header">
+            <div class="section-index">05</div>
+            <div class="section-label">Access &nbsp;/&nbsp; Pricing</div>
+        </div>
+        <div class="pricing-wrap">
+            <div class="pricing-intro appear">
+                <h2 class="pricing-big-heading">Start free.<br><em>Unlock the full kitchen.</em></h2>
+            </div>
+            <div class="pricing-cards-row">
+                <div class="pc appear d1">
+                    <p class="pc-tier">Free</p>
+                    <p class="pc-price">$0</p>
+                    <p class="pc-cadence">Forever free &mdash; no card required</p>
+                    <ul class="pc-features">
+                        <li><span class="pf-mark">+</span> Unlimited recipe generation</li>
+                        <li><span class="pf-mark">+</span> Full recipe + plating suggestions</li>
+                        <li><span class="pf-mark">+</span> Public recipe sharing via link</li>
+                        <li><span class="pf-mark">+</span> 50+ world cuisines</li>
+                    </ul>
+                    <a href="#" class="btn-free">Enter Free</a>
+                </div>
+                <div class="pc featured appear d2">
+                    <p class="pc-tier">Haute Pro</p>
+                    <p class="pc-price">$9</p>
+                    <p class="pc-cadence">per month &mdash; cancel anytime</p>
+                    <ul class="pc-features">
+                        <li><span class="pf-mark">+</span> Everything in Free</li>
+                        <li><span class="pf-mark">+</span> Save unlimited recipes</li>
+                        <li><span class="pf-mark">+</span> Ingredient substitutions</li>
+                        <li><span class="pf-mark">+</span> Export &amp; print as PDF</li>
+                    </ul>
+                    <a href="#" class="btn-copper-block">Unlock Haute Pro</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-index">06 &nbsp;/ End</div>
+        <a href="#" class="footer-logo">Haute <span>Food</span> Fusion</a>
+        <div class="footer-copy">&copy; 2026 &nbsp;&middot;&nbsp; AI-invented cuisine for every kitchen</div>
+    </footer>
+
+    <script>
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.appear').forEach(el => obs.observe(el));
+    </script>
+</body>
+</html>
